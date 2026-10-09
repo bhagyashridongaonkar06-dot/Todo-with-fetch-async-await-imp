@@ -129,6 +129,7 @@ function onCreateTodoList(arr) {
 async function onSubmit(eve) {
   try {
     eve.preventDefault();
+    handleSpinner(true)
     let newTodo = {
       todoItem: todoItem.value,
       todoid: Date.now(),
@@ -298,6 +299,9 @@ async function onUpdate() {
     } catch (err) {
         cl(err);
         snackbar(err, "error");
+    }
+    finally{
+        handleSpinner()
     }
 }
 
