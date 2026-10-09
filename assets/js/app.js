@@ -307,6 +307,7 @@ async function onUpdate() {
     todoForm.reset();
     addTodo.classList.remove("d-none");
     updateTodo.classList.add("d-none");
+    snackbar(`todo with name ${updateTodo.todoItem} updated successfully`, 'success')
   } catch (err) {
     cl(err);
     snackbar(err, "error");
@@ -353,6 +354,7 @@ async function onRemove(ele) {
       localState.todoArr.splice(idx, 1);
 
       ele.closest("li").remove();
+      snackbar(`todo with id ${removeId} deleted successfully`, 'success')
     }
   } catch (err) {
     cl(err);
