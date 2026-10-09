@@ -23,17 +23,17 @@
                         <form action="" class="" id="todoForm">
                             <div class="form-group">
                                 <label for="todoItem">Todo Name<span class="text-danger">*</span> :</label>
-                                <input type="text" class="form-control" id="todoItem">
+                                <input type="text" required class="form-control" id="todoItem">
                             </div>
 
                             <div class="form-group">
                                 <label for="description">Description<span class="text-center">*</span>:</label>
-                                <textarea type="text" rows="3" class="form-control" id="description"></textarea>
+                                <textarea type="text" required rows="3" class="form-control" id="description"></textarea>
                             </div>
 
                             <div class="form-group">
                                 <label for="isCompleted">ISCompleted Status<span class="text-danger">*</span>:</label>
-                                <select class="form-control" id="isCompleted">
+                                <select class="form-control" required id="isCompleted">
                                     <option value="yes">Yes</option>
                                     <option value="no">No</option>
                                 </select>
