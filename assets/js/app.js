@@ -208,8 +208,8 @@ function onEdit(ele) {
     let editId = ele.closest("li").id;
     // cl(editId);
 
-    let dltbtn = document.querySelectorAll('.deleteBtn')
-    dltbtn.forEach(e => e.disabled = false)
+    let dltbtn = document.querySelectorAll(".deleteBtn");
+    dltbtn.forEach((e) => (e.disabled = false));
 
     let li = ele.closest("li");
     li.querySelector(".deleteBtn").disabled = true;
@@ -278,12 +278,13 @@ async function onUpdate() {
                                 <div class="card">
                                     <div class="card-header" id="headingOne">
                                         <h2 class="mb-0 d-flex justify-content-between">
+                                         <input type="checkbox" onchange="onCheckBoxChecked(this)" ${updateObj.isCompleted ? "checked" : ""}
+                                                    class="mr-2"
+                                                    style="height: 30px; width: 30px; vertical-align: middle;">
                                             <button class="btn btn-link btn-block text-dark text-left mr-2" type="button"
                                                 data-toggle="collapse" data-target="#collapseOne-${updateObj.todoid}" aria-expanded="true"
                                                 aria-controls="collapseOne">
-                                                <input type="checkbox" onchange="onCheckBoxChecked(this)" ${updateObj.isCompleted ? "checked" : ""}
-                                                    class="mr-2"
-                                                    style="height: 30px; width: 30px; vertical-align: middle;"> <strong>${updateObj.todoItem}</strong>
+                                                <strong>${updateObj.todoItem}</strong>
                                             </button>
 
                                             <div class="d-flex justify-content-between">
