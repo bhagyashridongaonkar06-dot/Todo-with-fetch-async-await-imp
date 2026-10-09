@@ -256,6 +256,7 @@ async function onUpdate() {
       id: updateId,
     };
     cl(updateObj);
+    todoForm.reset()
 
     let res = await fetch(update_url, {
       method: "PATCH",

@@ -8,3 +8,11 @@
     align-items: center;
     position: absolute;
 }
+body{
+    background-color: thistle;
+}
+/* 
+.c{
+    border: 2px solid lightgray;
+    border-radius: 25%;
+} */
