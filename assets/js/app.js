@@ -97,16 +97,9 @@ function onCreateTodoList(arr) {
                                         <button class="btn btn-link btn-block text-dark text-left mr-2" type="button"
                                             data-toggle="collapse" data-target="#collapseOne-${todo.todoid}" aria-expanded="true"
                                             aria-controls="collapseOne">
-                                            ${
-                                              todo.isCompleted
-                                                ? `<input type="checkbox" onchange="onCheckBoxChecked(this)" checked
+                                            <input type="checkbox" onchange="onCheckBoxChecked(this)" ${todo.isCompleted ? "checked" : ""}
                                                 class="mr-2"
-                                                style="height: 15px; width: 15px; vertical-align: middle;">`
-                                                : `<input type="checkbox" onchange="onCheckBoxChecked(this)"
-                                                class="mr-2"
-                                                style="height: 15px; width: 15px; vertical-align: middle;">`
-                                            } 
-                                                <strong>${todo.todoItem}</strong>
+                                                style="height: 15px; width: 15px; vertical-align: middle;"><strong>${todo.todoItem}</strong>
                                         </button>
 
                                         <div class="d-flex justify-content-between">
@@ -171,16 +164,9 @@ async function onSubmit(eve) {
                                         <button class="btn btn-link btn-block text-dark text-left mr-2" type="button"
                                             data-toggle="collapse" data-target="#collapseOne-${newTodo.todoid}" aria-expanded="true"
                                             aria-controls="collapseOne">
-                                                                                        ${
-                                                                                          newTodo.isCompleted
-                                                                                            ? `<input type="checkbox" onchange="onCheckBoxChecked(this)" checked
+                                            <input type="checkbox" onchange="onCheckBoxChecked(this)" ${newTodo.isCompleted ? "checked" : ""}
                                                 class="mr-2"
-                                                style="height: 15px; width: 15px; vertical-align: middle;">`
-                                                                                            : `<input type="checkbox" onchange="onCheckBoxChecked(this)"
-                                                class="mr-2"
-                                                style="height: 15px; width: 15px; vertical-align: middle;">`
-                                                                                        } 
-                                                <strong>${newTodo.todoItem}</strong>
+                                                style="height: 15px; width: 15px; vertical-align: middle;"><strong>${newTodo.todoItem}</strong>
                                         </button>
 
                                         <div class="d-flex justify-content-between">
@@ -242,87 +228,77 @@ function onEdit(ele) {
 
 async function onUpdate() {
   try {
-    handleSpinner(true);
-    let updateId = localState.editId;
-    // cl(updateId)
+        handleSpinner(true);
+        let updateId = localState.editId;
+        // cl(updateId)
 
-    let update_url = `${base_url}/todowithcheckandContent/${updateId}.json`;
+        let update_url = `${base_url}/todowithcheckandContent/${updateId}.json`;
 
-    let updateObj = {
-      todoItem: todoItem.value,
-      isCompleted: isCompleted.value === "yes" ? true : false,
-      description: description.value,
-      todoid: Date.now(),
-      id: updateId,
-    };
-    cl(updateObj);
-    
-    let res = await fetch(update_url, {
+        let updateObj = {
+        todoItem: todoItem.value,
+        isCompleted: isCompleted.value === "yes",
+        description: description.value,
+        todoid: Date.now(),
+        id: updateId,
+        };
+        cl(updateObj);
+
+        let res = await fetch(update_url, {
         method: "PATCH",
         body: JSON.stringify(updateObj),
         headers: {
             "content-type": "application/json",
             auth: "JWT from LS",
         },
-    });
-    
-    if (!res.ok) {
+        });
+
+        if (!res.ok) {
         throw new Error(`http : ${res.status}`);
+        }
+
+        let data = await res.json();
+
+        cl(data);
+        let idx = localState.todoArr.findIndex((e) => e.id === updateId);
+        localState.todoArr[idx] = updateObj;
+
+        let obj = document.getElementById(updateId);
+        obj.innerHTML = `<div class="accordion" id="accordionExample">
+                                <div class="card">
+                                    <div class="card-header" id="headingOne">
+                                        <h2 class="mb-0 d-flex justify-content-between">
+                                            <button class="btn btn-link btn-block text-dark text-left mr-2" type="button"
+                                                data-toggle="collapse" data-target="#collapseOne-${updateObj.todoid}" aria-expanded="true"
+                                                aria-controls="collapseOne">
+                                                <input type="checkbox" onchange="onCheckBoxChecked(this)" ${updateObj.isCompleted ? "checked" : ""}
+                                                    class="mr-2"
+                                                    style="height: 15px; width: 15px; vertical-align: middle;"><strong>${updateObj.todoItem}</strong>
+                                            </button>
+
+                                            <div class="d-flex justify-content-between">
+                                                <button class="btn btn-sm btn-outline-success mr-1"
+                                                    onclick="onEdit(this)">Edit</button>
+                                                <button class="btn btn-sm btn-outline-danger"
+                                                    onclick="onRemove(this)">Remove</button>
+                                            </div>
+                                        </h2>
+                                    </div>
+
+                                    <div id="collapseOne-${updateObj.todoid}" class="collapse" aria-labelledby="headingOne"
+                                        data-parent="#todoList">
+                                        <div class="card-body">
+                                        ${updateObj.description}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
+        todoForm.reset();
+        addTodo.classList.remove("d-none");
+        updateTodo.classList.add("d-none");
+    } catch (err) {
+        cl(err);
+        snackbar(err, "error");
     }
-    
-    let data = await res.json();
-    
-    cl(data);
-    let idx = localState.todoArr.findIndex((e) => e.id === updateId);
-    localState.todoArr[idx] = updateObj;
-    
-    let obj = document.getElementById(updateId);
-    obj.innerHTML = `<div class="accordion" id="accordionExample">
-    <div class="card">
-    <div class="card-header" id="headingOne">
-    <h2 class="mb-0 d-flex justify-content-between">
-    <button class="btn btn-link btn-block text-dark text-left mr-2" type="button"
-    data-toggle="collapse" data-target="#collapseOne-${updateObj.todoid}" aria-expanded="true"
-    aria-controls="collapseOne">
-    ${
-        updateObj.isCompleted
-        ? `<input type="checkbox" onchange="onCheckBoxChecked(this)" checked
-        class="mr-2"
-        style="height: 15px; width: 15px; vertical-align: middle;">`
-        : `<input type="checkbox" onchange="onCheckBoxChecked(this)"
-        class="mr-2"
-        style="height: 15px; width: 15px; vertical-align: middle;">`
-    } 
-    <strong>${updateObj.todoItem}</strong>
-    </button>
-    
-    <div class="d-flex justify-content-between">
-    <button class="btn btn-sm btn-outline-success mr-1"
-    onclick="onEdit(this)">Edit</button>
-    <button class="btn btn-sm btn-outline-danger"
-    onclick="onRemove(this)">Remove</button>
-    </div>
-    </h2>
-    </div>
-    
-    <div id="collapseOne-${updateObj.todoid}" class="collapse" aria-labelledby="headingOne"
-    data-parent="#todoList">
-    <div class="card-body">
-    ${updateObj.description}
-    </div>
-    </div>
-    </div>
-                        </div>`;
-                        todoForm.reset()
-                        updateTodo.classList.add('d-none')
-                        addTodo.classList.remove('d-none')
-                    } catch (err) {
-    cl(err);
-    snackbar(err, "error");
-  }
-  finally {
-    handleSpinner()
-  }
 }
 
 //function remove
@@ -330,46 +306,81 @@ async function onUpdate() {
 async function onRemove(ele) {
   handleSpinner(true);
   try {
-    let res1 = await Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, remove it!",
-    });
+        let res1 = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, remove it!",
+        });
 
-    if (res1.isConfirmed) {
-      let removeId = ele.closest("li").id;
-      // cl(removeId)
+        if (res1.isConfirmed) {
+        let removeId = ele.closest("li").id;
+        // cl(removeId)
 
-      let remove_url = `${base_url}/todowithcheckandContent/${removeId}.json`;
+        let remove_url = `${base_url}/todowithcheckandContent/${removeId}.json`;
 
-      let res = await fetch(remove_url, {
-        method: "DELETE",
-        body: null,
-        headers: {
-          "content-type": "application/json",
-          auth: "JWT from LS",
-        },
-      });
-      if (!res.ok) {
-        throw new Error(`http : ${res.status}`);
-      }
-      let data = await res.json();
+        let res = await fetch(remove_url, {
+            method: "DELETE",
+            body: null,
+            headers: {
+            "content-type": "application/json",
+            auth: "JWT from LS",
+            },
+        });
+        if (!res.ok) {
+            throw new Error(`http : ${res.status}`);
+        }
+        let data = await res.json();
 
-      let idx = localState.todoArr.findIndex((e) => e.id === removeId);
-      localState.todoArr.splice(idx, 1);
+        let idx = localState.todoArr.findIndex((e) => e.id === removeId);
+        localState.todoArr.splice(idx, 1);
 
-      ele.closest("li").remove();
+        ele.closest("li").remove();
+        }
+    } catch (err) {
+        cl(err);
+        snackbar(err, "error");
+    } finally {
+        handleSpinner();
     }
-  } catch (err) {
-    cl(err);
-    snackbar(err, "error");
-  } finally {
-    handleSpinner();
-  }
+}
+
+async function onCheckBoxChecked(ele) {
+  handleSpinner(true);
+  try {
+        let checkBoxId = ele.closest("li").id;
+        // cl(checkBoxId)
+
+        let check_url = `${base_url}/todowithcheckandContent/${checkBoxId}.json`;
+        let checkobj = {
+        isCompleted: ele.checked,
+        };
+        // cl(checkobj)
+        let res = await fetch(check_url, {
+        method: "PATCH",
+        body: JSON.stringify(checkobj),
+        headers: {
+            "content-type": "application/json",
+            auth: "JWT from LS",
+        },
+        });
+        if (!res.ok) {
+        throw new Error(`${res.status}`);
+        }
+
+        let data = await res.json();
+        let checkBoxObj = localState.todoArr.find((e) => e.id === checkBoxId);
+        // cl(checkBoxObj)
+        checkBoxObj.isCompleted = checkobj.isCompleted;
+    } catch (err) {
+        cl(err);
+        snackbar(err, "error");
+    } finally {
+        handleSpinner();
+    }
 }
 
 todoForm.addEventListener("submit", onSubmit);
