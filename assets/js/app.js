@@ -256,65 +256,67 @@ async function onUpdate() {
       id: updateId,
     };
     cl(updateObj);
-    todoForm.reset()
-
+    
     let res = await fetch(update_url, {
-      method: "PATCH",
-      body: JSON.stringify(updateObj),
-      headers: {
-        "content-type": "application/json",
-        auth: "JWT from LS",
-      },
+        method: "PATCH",
+        body: JSON.stringify(updateObj),
+        headers: {
+            "content-type": "application/json",
+            auth: "JWT from LS",
+        },
     });
-
+    
     if (!res.ok) {
-      throw new Error(`http : ${res.status}`);
+        throw new Error(`http : ${res.status}`);
     }
-
+    
     let data = await res.json();
-
+    
     cl(data);
     let idx = localState.todoArr.findIndex((e) => e.id === updateId);
     localState.todoArr[idx] = updateObj;
-
+    
     let obj = document.getElementById(updateId);
     obj.innerHTML = `<div class="accordion" id="accordionExample">
-                            <div class="card">
-                                <div class="card-header" id="headingOne">
-                                    <h2 class="mb-0 d-flex justify-content-between">
-                                        <button class="btn btn-link btn-block text-dark text-left mr-2" type="button"
-                                            data-toggle="collapse" data-target="#collapseOne-${updateObj.todoid}" aria-expanded="true"
-                                            aria-controls="collapseOne">
-                                            ${
-                                              updateObj.isCompleted
-                                                ? `<input type="checkbox" onchange="onCheckBoxChecked(this)" checked
-                                                class="mr-2"
-                                                style="height: 15px; width: 15px; vertical-align: middle;">`
-                                                : `<input type="checkbox" onchange="onCheckBoxChecked(this)"
-                                                class="mr-2"
-                                                style="height: 15px; width: 15px; vertical-align: middle;">`
-                                            } 
-                                                <strong>${updateObj.todoItem}</strong>
-                                        </button>
-
-                                        <div class="d-flex justify-content-between">
-                                            <button class="btn btn-sm btn-outline-success mr-1"
-                                                onclick="onEdit(this)">Edit</button>
-                                            <button class="btn btn-sm btn-outline-danger"
-                                                onclick="onRemove(this)">Remove</button>
-                                        </div>
-                                    </h2>
-                                </div>
-
-                                <div id="collapseOne-${updateObj.todoid}" class="collapse" aria-labelledby="headingOne"
-                                    data-parent="#todoList">
-                                    <div class="card-body">
-                                       ${updateObj.description}
-                                    </div>
-                                </div>
-                            </div>
+    <div class="card">
+    <div class="card-header" id="headingOne">
+    <h2 class="mb-0 d-flex justify-content-between">
+    <button class="btn btn-link btn-block text-dark text-left mr-2" type="button"
+    data-toggle="collapse" data-target="#collapseOne-${updateObj.todoid}" aria-expanded="true"
+    aria-controls="collapseOne">
+    ${
+        updateObj.isCompleted
+        ? `<input type="checkbox" onchange="onCheckBoxChecked(this)" checked
+        class="mr-2"
+        style="height: 15px; width: 15px; vertical-align: middle;">`
+        : `<input type="checkbox" onchange="onCheckBoxChecked(this)"
+        class="mr-2"
+        style="height: 15px; width: 15px; vertical-align: middle;">`
+    } 
+    <strong>${updateObj.todoItem}</strong>
+    </button>
+    
+    <div class="d-flex justify-content-between">
+    <button class="btn btn-sm btn-outline-success mr-1"
+    onclick="onEdit(this)">Edit</button>
+    <button class="btn btn-sm btn-outline-danger"
+    onclick="onRemove(this)">Remove</button>
+    </div>
+    </h2>
+    </div>
+    
+    <div id="collapseOne-${updateObj.todoid}" class="collapse" aria-labelledby="headingOne"
+    data-parent="#todoList">
+    <div class="card-body">
+    ${updateObj.description}
+    </div>
+    </div>
+    </div>
                         </div>`;
-  } catch (err) {
+                        todoForm.reset()
+                        updateTodo.classList.add('d-none')
+                        addTodo.classList.remove('d-none')
+                    } catch (err) {
     cl(err);
     snackbar(err, "error");
   }
